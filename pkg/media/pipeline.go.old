@@ -74,13 +74,6 @@ func New(ctx context.Context, conf *config.Config, params *params.Params, g *sta
 		return nil, err
 	}
 
-	if err = pipeline.SetProperty("latency", uint64(5e6)); err != nil {
-		return nil, err
-	}
-	if err = pipeline.SetProperty("async-handling", true); err != nil {
-		return nil, err
-	}
-
 	if err = pipeline.Add(input.bin.Element); err != nil {
 		return nil, err
 	}
@@ -190,6 +183,21 @@ func (p *Pipeline) Run(ctx context.Context) error {
 		span.RecordError(err)
 		logger.Errorw("failed to set pipeline state", err)
 		return err
+	}
+
+	if err = p.pipeline.SetProperty("latency", uint64(0)); err != nil {
+		logger.Errorw("failed to set pipeline latency", err)
+	}
+
+	// This line is probably not needed but you can try
+	if err = p.pipeline.SetProperty("async-handling", false); err != nil {
+		logger.Errorw("failed to set async handling", err)
+	}
+	if err = p.pipeline.SetProperty("processing-deadline", uint64(5*time.Millisecond)); err != nil {
+		logger.Warnw("failed to set processing deadline", err)
+	}
+	if err = p.pipeline.SetProperty("max-lateness", int64(-1)); err != nil {
+		logger.Warnw("failed to set max lateness", err)
 	}
 
 	err = p.input.Start(ctx)
