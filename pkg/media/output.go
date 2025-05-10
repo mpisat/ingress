@@ -102,6 +102,9 @@ func NewVideoOutput(codec livekit.VideoCodec, layer *livekit.VideoLayer, outputS
 	if err = queueIn.SetProperty("max-size-buffers", uint(1)); err != nil {
 		return nil, err
 	}
+	if err = queueIn.SetProperty("max-size-time", uint64(5e6)); err != nil {
+		return nil, err
+	}
 
 	pads, err := queueIn.GetSinkPads()
 	if err != nil {
@@ -142,6 +145,9 @@ func NewVideoOutput(codec livekit.VideoCodec, layer *livekit.VideoLayer, outputS
 		return nil, err
 	}
 	if err = queueEnc.SetProperty("max-size-buffers", uint(1)); err != nil {
+		return nil, err
+	}
+	if err = queueEnc.SetProperty("max-size-time", uint64(5e6)); err != nil {
 		return nil, err
 	}
 
@@ -229,7 +235,10 @@ func NewVideoOutput(codec livekit.VideoCodec, layer *livekit.VideoLayer, outputS
 	if err != nil {
 		return nil, err
 	}
-	if err = queueOut.SetProperty("max-size-buffers", uint(2)); err != nil {
+	if err = queueOut.SetProperty("max-size-buffers", uint(1)); err != nil {
+		return nil, err
+	}
+	if err = queueOut.SetProperty("max-size-time", uint64(5e6)); err != nil { // Add time limit (5ms)
 		return nil, err
 	}
 
@@ -286,6 +295,9 @@ func NewAudioOutput(options *livekit.IngressAudioEncodingOptions, outputSync *ut
 	if err = queueEnc.SetProperty("max-size-buffers", uint(1)); err != nil {
 		return nil, err
 	}
+	if err = queueEnc.SetProperty("max-size-time", uint64(5e6)); err != nil { // Add time limit (5ms)
+		return nil, err
+	}
 
 	pads, err := queueEnc.GetSinkPads()
 	if err != nil {
@@ -319,7 +331,7 @@ func NewAudioOutput(options *livekit.IngressAudioEncodingOptions, outputSync *ut
 		}
 		// TODO: FEC?
 		// if err = e.enc.SetProperty("inband-fec", true); err != nil {
-		// 	return nil, err
+		//      return nil, err
 		// }
 		e.enc.SetArg("frame-size", fmt.Sprint(opusFrameSize))
 
@@ -331,7 +343,7 @@ func NewAudioOutput(options *livekit.IngressAudioEncodingOptions, outputSync *ut
 	if err != nil {
 		return nil, err
 	}
-	if err = queueOut.SetProperty("max-size-time", uint64(5e7)); err != nil {
+	if err = queueOut.SetProperty("max-size-time", uint64(5e6)); err != nil {
 		return nil, err
 	}
 
