@@ -36,8 +36,8 @@ import (
 )
 
 const (
-	maxVideoLatency = 600 * time.Millisecond
-	maxAudioLatency = time.Second
+	maxVideoLatency = 100 * time.Millisecond
+	maxAudioLatency = 166 * time.Millisecond
 )
 
 type RelayWhipTrackHandler struct {
