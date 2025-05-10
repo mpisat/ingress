@@ -37,7 +37,7 @@ import (
 )
 
 const (
-	targetMinQueueLength = 2
+	targetMinQueueLength = 0 // was 2 before
 )
 
 type WebRTCSink struct {
